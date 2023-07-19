@@ -15,7 +15,8 @@ local ground = love.graphics.newImage('rss/picture/ground.png')
 
 local xGround = 0
 local xBackGround = 0
-local spawTimer = 0
+local spawTimer = 2
+local score = 0
 
 
 GROUND_SPEED = 60
@@ -37,6 +38,9 @@ function love.load()
         fullscreen = false,
         resizable = true
     })
+
+    flFontMedium = love.graphics.newFont('rss/font/flappy.ttf', 16)
+    fontMedium = love.graphics.newFont('rss/font/font.ttf', 16)
 
     gameState = 'startState'
 
@@ -77,20 +81,31 @@ function love.update(dt)
 
     spawTimer = spawTimer + dt
     
-    if spawTimer > 2 then
+    if spawTimer > 3 then
         table.insert(pipes, Pipe())
         spawTimer = 0
     end
 
     bird:update(dt)
 
+
     for i, pipe in pairs(pipes) do
         pipe:update(dt)
+
+        if (bird.x + bird.width / 2) > (pipe.x + pipe.width / 2) and pipe.countable then 
+            score = score + 1
+            pipe.countable = false
+        end
+        -- if (pipe.x + pipe.width / 2) > (VIRTUAL_WINDOW_WIDTH / 2 - 20) and (pipe.x + pipe.width / 2) > (VIRTUAL_WINDOW_WIDTH / 2 + 20) then
+        --     score = score + 1
+        -- end
 
         if pipe.x + pipe.width < 0 then
             table.remove(pipes, i)
         end
     end
+
+     
 
     love.keyboard.keysPressed = {}
 
@@ -98,6 +113,8 @@ end
 
 function love.draw()
     push:start()
+    love.graphics.setFont(fontMedium)
+    love.graphics.setFont(love.graphics.newFont())
 
     love.graphics.draw(background, -xBackGround, 0)
     love.graphics.draw(ground, -xGround, VIRTUAL_WINDOW_HEIGHT - 16)
@@ -110,8 +127,15 @@ function love.draw()
     
     bird:render()
 
-    
+    displayScore()
 
     push:finish()
     
+end
+
+function displayScore()
+    love.graphics.setFont(flFontMedium)
+    love.graphics.printf('Score', 0, VIRTUAL_WINDOW_HEIGHT / 4 - 15, 512, 'center')
+    love.graphics.printf(tostring(score), 0, VIRTUAL_WINDOW_HEIGHT / 4 + 5, 512, 'center')
+    -- love.graphics.printf()
 end
