@@ -2,6 +2,7 @@ push = require 'push'
 Class = require 'class'
 
 require 'Bird'
+require 'Pipe'
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -20,6 +21,7 @@ BACKGROUND_SPEED = 30
 BACKGROUND_LOOPING_POINT = 413
 
 local bird = Bird()
+local pipe = Pipe()
 
 
 
@@ -72,6 +74,7 @@ function love.update(dt)
     --nếu không thì nó sẽ reset lại giá trị ban đầu
 
     bird:update(dt)
+    pipe:update(dt)
     love.keyboard.keysPressed = {}
 
 end
@@ -85,6 +88,7 @@ function love.draw()
     love.graphics.print('Game State: '..gameState, VIRTUAL_WINDOW_WIDTH / 2, 2)
     
     bird:render()
+    pipe:render()
 
     push:finish()
     
