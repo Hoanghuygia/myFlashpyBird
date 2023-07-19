@@ -15,13 +15,15 @@ local ground = love.graphics.newImage('rss/picture/ground.png')
 
 local xGround = 0
 local xBackGround = 0
+local spawTimer = 0
+
 
 GROUND_SPEED = 60
 BACKGROUND_SPEED = 30
 BACKGROUND_LOOPING_POINT = 413
 
 local bird = Bird()
-local pipe = Pipe()
+local pipes = {}
 
 
 
@@ -73,8 +75,23 @@ function love.update(dt)
     xBackGround = (xBackGround + BACKGROUND_SPEED * dt) % BACKGROUND_LOOPING_POINT--kiểu reset lại không cho toạ độ của xBackGround, xGround không bao giờ vượt qua một số
     --nếu không thì nó sẽ reset lại giá trị ban đầu
 
+    spawTimer = spawTimer + dt
+    
+    if spawTimer > 2 then
+        table.insert(pipes, Pipe())
+        spawTimer = 0
+    end
+
     bird:update(dt)
-    pipe:update(dt)
+
+    for i, pipe in pairs(pipes) do
+        pipe:update(dt)
+
+        if pipe.x + pipe.width < 0 then
+            table.remove(pipes, i)
+        end
+    end
+
     love.keyboard.keysPressed = {}
 
 end
@@ -86,9 +103,14 @@ function love.draw()
     love.graphics.draw(ground, -xGround, VIRTUAL_WINDOW_HEIGHT - 16)
 
     love.graphics.print('Game State: '..gameState, VIRTUAL_WINDOW_WIDTH / 2, 2)
+
+    for i, pipe in pairs(pipes) do 
+        pipe:render()
+    end
     
     bird:render()
-    pipe:render()
+
+    
 
     push:finish()
     
