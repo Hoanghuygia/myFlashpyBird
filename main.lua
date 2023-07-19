@@ -39,16 +39,6 @@ function love.load()
     love.keyboard.keysPressed = {}
 end
 
-function love.update(dt)
-    xGround = (xGround + GROUND_SPEED * dt) % VIRTUAL_WINDOW_WIDTH
-    xBackGround = (xBackGround + BACKGROUND_SPEED * dt) % BACKGROUND_LOOPING_POINT--kiểu reset lại không cho toạ độ của xBackGround, xGround không bao giờ vượt qua một số
-    --nếu không thì nó sẽ reset lại giá trị ban đầu
-
-    bird:update(dt)
-    love.keyboard.keysPressed = {}
-
-end
-
 function love.resize(w, h)
     push:resize(w, h)
     
@@ -74,7 +64,16 @@ function love.keyboard.wasPressed(key)
     else
         return false
     end
-    
+end
+
+function love.update(dt)
+    xGround = (xGround + GROUND_SPEED * dt) % VIRTUAL_WINDOW_WIDTH
+    xBackGround = (xBackGround + BACKGROUND_SPEED * dt) % BACKGROUND_LOOPING_POINT--kiểu reset lại không cho toạ độ của xBackGround, xGround không bao giờ vượt qua một số
+    --nếu không thì nó sẽ reset lại giá trị ban đầu
+
+    bird:update(dt)
+    love.keyboard.keysPressed = {}
+
 end
 
 function love.draw()
