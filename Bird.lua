@@ -11,6 +11,8 @@ function Bird:init()
     self.y = VIRTUAL_WINDOW_HEIGHT / 2 - (self.height / 2)
 
     self.dy = 0
+
+    self.isCollide = false
 end
 
 function Bird:update(dt)
@@ -22,9 +24,16 @@ function Bird:update(dt)
         end
     end
     self.y = self.y + self.dy
-
 end
 
 function Bird:render()--mình hay bị mấy cái lỗi khi tạo function trong 
+
     love.graphics.draw(self.image, self.x, self.y)
+
 end
+
+-- function Bird:checkCollide()
+--     if self.y < 0 or self.y + self.height > VIRTUAL_WINDOW_HEIGHT - 16 then
+--         self.isCollide = true
+--     end
+-- end

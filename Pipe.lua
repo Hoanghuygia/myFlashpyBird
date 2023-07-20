@@ -2,11 +2,11 @@ Pipe = Class{}
 
 local PIPE_IMAGE = love.graphics.newImage('rss/picture/pipe.png')
 local PITE_IMAGE_REVERSE = love.graphics.newImage('rss/picture/pipe_reverse.png')
-local PIPE_SCROLL = -60
+PIPE_SCROLL = -60
 
 local xPite
 local yPite
-local distance = 100
+distance = 100
 
 function Pipe:init()
     self.x = VIRTUAL_WINDOW_WIDTH
