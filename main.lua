@@ -15,17 +15,17 @@ local ground = love.graphics.newImage('rss/picture/ground.png')
 
 local xGround = 0
 local xBackGround = 0
-local spawTimer = 2
+local spawTimer = 0
 local score = 0
-
+local colDistance = 250
 
 GROUND_SPEED = 60
 BACKGROUND_SPEED = 30
 BACKGROUND_LOOPING_POINT = 413
 
 local bird = Bird()
-local pipes = {}
-
+local firstPipe = Pipe()
+local pipes = {firstPipe}
 
 
 function love.load()
@@ -79,15 +79,19 @@ function love.update(dt)
     xBackGround = (xBackGround + BACKGROUND_SPEED * dt) % BACKGROUND_LOOPING_POINT--kiểu reset lại không cho toạ độ của xBackGround, xGround không bao giờ vượt qua một số
     --nếu không thì nó sẽ reset lại giá trị ban đầu
 
-    spawTimer = spawTimer + dt
     
-    if spawTimer > 3 then
+    spawTimer = spawTimer + dt
+
+    -- if spawTimer > 3 then
+    --     table.insert(pipes, Pipe())
+    --     spawTimer = 0
+    -- end
+
+    if pipes[#pipes].x < (VIRTUAL_WINDOW_WIDTH - colDistance) then
         table.insert(pipes, Pipe())
-        spawTimer = 0
     end
 
     bird:update(dt)
-
 
     for i, pipe in pairs(pipes) do
         pipe:update(dt)
@@ -96,9 +100,6 @@ function love.update(dt)
             score = score + 1
             pipe.countable = false
         end
-        -- if (pipe.x + pipe.width / 2) > (VIRTUAL_WINDOW_WIDTH / 2 - 20) and (pipe.x + pipe.width / 2) > (VIRTUAL_WINDOW_WIDTH / 2 + 20) then
-        --     score = score + 1
-        -- end
 
         if pipe.x + pipe.width < 0 then
             table.remove(pipes, i)
@@ -119,7 +120,7 @@ function love.draw()
     love.graphics.draw(background, -xBackGround, 0)
     love.graphics.draw(ground, -xGround, VIRTUAL_WINDOW_HEIGHT - 16)
 
-    love.graphics.print('Game State: '..gameState, VIRTUAL_WINDOW_WIDTH / 2, 2)
+    love.graphics.print('Game State: ', VIRTUAL_WINDOW_WIDTH / 2, 2)
 
     for i, pipe in pairs(pipes) do 
         pipe:render()
