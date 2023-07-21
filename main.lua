@@ -21,7 +21,7 @@ local score = 0
 local colDistance = 250
 count = 0
 
-GROUND_SPEED = 60
+GROUND_SPEED = 120
 BACKGROUND_SPEED = 20
 BACKGROUND_LOOPING_POINT = 413
 
@@ -115,6 +115,15 @@ function love.update(dt)
 
             if (bird.x) > (pipe.x + pipe.width) and pipe.countable then 
                 score = score + 1
+                setPipeScroll(-2)
+                GROUND_SPEED = GROUND_SPEED - 2
+                if colDistance > 150 then
+                    colDistance = colDistance - 2
+                end
+                if distance > 90 then 
+                    distance = distance - 2
+                end
+                -- distance = distance - 2
                 pipe.countable = false
             end
 
@@ -143,7 +152,7 @@ function love.draw()
         pipe:render()
     end
     
-    love.graphics.print('Game State: '..count, VIRTUAL_WINDOW_WIDTH / 2, 2)
+    love.graphics.print('Game State: '..PIPE_SCROLL, VIRTUAL_WINDOW_WIDTH / 2, 2)
 
     bird:render()
 
@@ -207,7 +216,10 @@ end
 function resetGame()
     bird = Bird()
     score = 0
-
+    GROUND_SPEED = 120
+    PIPE_SCROLL = -120
+    colDistance = 250
+    distance = 120
     firstPipe = Pipe()
     pipes = {firstPipe}
 end
