@@ -1,9 +1,12 @@
 Bird = Class{}
 
 local GRAVITY = 20
+IMAGE1 = love.graphics.newImage('rss/picture/bird.png')
+IMAGE2 = love.graphics.newImage('rss/picture/bird2_.png')
+
 
 function Bird:init()
-    self.image = love.graphics.newImage('rss/picture/bird.png')
+    self.image = IMAGE1
     self.width = self.image:getWidth()
     self.height = self.image:getHeight()
 
@@ -21,6 +24,11 @@ function Bird:update(dt)
         --công thức v = v0 + at thì cái này cũng vậy, khi có v0 = -5, trường hợp v0 = 0 thì không cần
         if love.keyboard.wasPressed('space') then
             self.dy = -5
+        end
+        if count > 15 then 
+            self.image = IMAGE2
+        else
+            self.image = IMAGE1
         end
     end
     self.y = self.y + self.dy

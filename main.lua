@@ -18,7 +18,8 @@ local xGround = 0
 local xBackGround = 0
 local spawTimer = 0
 local score = 0
-local colDistance = 150
+local colDistance = 250
+count = 0
 
 GROUND_SPEED = 60
 BACKGROUND_SPEED = 20
@@ -41,6 +42,8 @@ function love.load()
         fullscreen = false,
         resizable = true
     })
+
+    
 
     flFontMedium = love.graphics.newFont('rss/font/flappy.ttf', 16)
     flFontBig = love.graphics.newFont('rss/font/flappy.ttf', 52)
@@ -79,6 +82,7 @@ function love.keyboard.wasPressed(key)
 end
 
 function love.update(dt)
+    
     -- GROUND_SPEED = GROUND_SPEED + score
     if gameState == 'playState' then
         xGround = (xGround + GROUND_SPEED * dt) % VIRTUAL_WINDOW_WIDTH
@@ -90,6 +94,11 @@ function love.update(dt)
         --     table.insert(pipes, Pipe())
         --     spawTimer = 0
         -- end
+
+        count = count + 1
+        if count == 30 then
+            count = 0
+        end
 
         if pipes[#pipes].x < (VIRTUAL_WINDOW_WIDTH - colDistance) then
             table.insert(pipes, Pipe())
@@ -134,7 +143,7 @@ function love.draw()
         pipe:render()
     end
     
-    love.graphics.print('Game State: '..gameState, VIRTUAL_WINDOW_WIDTH / 2, 2)
+    love.graphics.print('Game State: '..count, VIRTUAL_WINDOW_WIDTH / 2, 2)
 
     bird:render()
 
@@ -198,7 +207,7 @@ end
 function resetGame()
     bird = Bird()
     score = 0
-    
+
     firstPipe = Pipe()
     pipes = {firstPipe}
 end
