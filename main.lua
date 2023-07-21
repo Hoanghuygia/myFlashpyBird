@@ -12,12 +12,13 @@ VIRTUAL_WINDOW_HEIGHT = 288
 
 local background = love.graphics.newImage('rss/picture/background.png')
 local ground = love.graphics.newImage('rss/picture/ground.png')
+local againButton = love.graphics.newImage('rss/picture/undo1.png')
 
 local xGround = 0
 local xBackGround = 0
 local spawTimer = 0
 local score = 0
-local colDistance = 250
+local colDistance = 150
 
 GROUND_SPEED = 60
 BACKGROUND_SPEED = 20
@@ -63,7 +64,7 @@ function love.keypressed(key)
     elseif key == 'enter' or key == 'return' then 
         if gameState == 'startState' then
             gameState = 'playState'
-        else 
+        elseif gameState == 'loseState' then
             gameState = 'startState'
         end
     end
@@ -95,11 +96,6 @@ function love.update(dt)
         end
 
         bird:update(dt)
-        -- bird:checkCollide()
-
-        -- if bird.isCollide then
-        --     gameState = 'loseState'
-        -- end
 
         for i, pipe in pairs(pipes) do
             pipe:update(dt)
@@ -113,18 +109,16 @@ function love.update(dt)
                 pipe.countable = false
             end
 
-            -- if (bird.x) > (pipe.x) and pipe.countable then 
-            --     score = score + 1
-            --     pipe.countable = false
-            -- end
-
             if pipe.x + pipe.width < 0 then
                 table.remove(pipes, i)
             end
         end
 
         love.keyboard.keysPressed = {}
+    elseif gameState == 'startState' then
+        resetGame()
     end
+
 end
 
 function love.draw()
@@ -140,12 +134,14 @@ function love.draw()
         pipe:render()
     end
     
-    love.graphics.print('Game State: '..GROUND_SPEED, VIRTUAL_WINDOW_WIDTH / 2, 2)
+    love.graphics.print('Game State: '..gameState, VIRTUAL_WINDOW_WIDTH / 2, 2)
 
     bird:render()
 
-    if gameState == 'playState' or gameState == 'startState' then
+    if gameState == 'playState' then
         displayScore()
+    elseif gameState == 'startState' then
+        displayStartScreen()
     else
         displayScoreScreen()
     end
@@ -176,5 +172,33 @@ end
 function displayScoreScreen()
     love.graphics.setColor(243/255, 182/255, 31/255, 255/255)
     love.graphics.setFont(flFontBig)
-    love.graphics.printf('Game Over', 0, VIRTUAL_WINDOW_HEIGHT / 4, 512, 'center')  
+    love.graphics.printf('Game Over', 0, VIRTUAL_WINDOW_HEIGHT / 4 - 20, 512, 'center')  
+
+    --window score
+    -- love.graphics.setColor(217/255, 194/255, 178/255, 200/255)
+    -- love.graphics.rectangle("fill", 124, 105, 256, 144)
+    love.graphics.setColor(255/255, 255/255, 255/255, 255/255)
+
+    love.graphics.setFont(flFontMedium)
+    love.graphics.printf('Your score ', 0, VIRTUAL_WINDOW_HEIGHT / 4 + 50, 512, 'center')
+    love.graphics.printf(tostring(score), 0, VIRTUAL_WINDOW_HEIGHT / 4 + 70, 512, 'center')
+
+    love.graphics.draw(againButton, VIRTUAL_WINDOW_WIDTH / 2 - (againButton:getWidth() / 2), VIRTUAL_WINDOW_HEIGHT / 4 + 95)
+
+end
+
+function displayStartScreen()
+
+    love.graphics.setColor(243/255, 182/255, 31/255, 255/255)
+    love.graphics.setFont(flFontBig)
+    love.graphics.printf('Start', 0, VIRTUAL_WINDOW_HEIGHT / 4 - 20, 512, 'center') 
+    
+end
+
+function resetGame()
+    bird = Bird()
+    score = 0
+    
+    firstPipe = Pipe()
+    pipes = {firstPipe}
 end
