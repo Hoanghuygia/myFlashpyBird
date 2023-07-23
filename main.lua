@@ -51,12 +51,17 @@ function love.load()
         ['explosion'] = love.audio.newSource('rss/sound/explosion.wav', 'static'),
         ['hurt'] = love.audio.newSource('rss/sound/hurt.wav', 'static'),
         ['score'] = love.audio.newSource('rss/sound/score.wav', 'static'),
-        ['ping'] = love.audio.newSource('rss/sound/ping.wav', 'static'),
+        ['ping'] = love.audio.newSource('rss/sound/beep.mp3', 'static'),
 
         ['music'] = love.audio.newSource('rss/sound/marios_way.mp3', 'static')
     }
 
+    for i, sound in pairs(sounds) do
+        sound:setVolume(0.5)
+    end
+
     sounds['music']:setLooping(true)
+    -- sounds['music']:setVolume(0.1)
     sounds['music']:play()
     
 
