@@ -19,6 +19,9 @@ local xBackGround = 0
 local spawTimer = 0
 local score = 0
 local colDistance = 250
+local Timer = 3
+local countTime = 0
+local countDownTime = 1
 count = 0
 
 GROUND_SPEED = 120
@@ -43,11 +46,24 @@ function love.load()
         resizable = true
     })
 
+    sounds = {
+        ['jump'] = love.audio.newSource('rss/sound/jump.wav', 'static'),
+        ['explosion'] = love.audio.newSource('rss/sound/explosion.wav', 'static'),
+        ['hurt'] = love.audio.newSource('rss/sound/hurt.wav', 'static'),
+        ['score'] = love.audio.newSource('rss/sound/score.wav', 'static'),
+        ['ping'] = love.audio.newSource('rss/sound/ping.wav', 'static'),
+
+        ['music'] = love.audio.newSource('rss/sound/marios_way.mp3', 'static')
+    }
+
+    sounds['music']:setLooping(true)
+    sounds['music']:play()
     
 
     flFontMedium = love.graphics.newFont('rss/font/flappy.ttf', 16)
     flFontBig = love.graphics.newFont('rss/font/flappy.ttf', 52)
     fontMedium = love.graphics.newFont('rss/font/font.ttf', 16)
+    fontHuge = love.graphics.newFont('rss/font/font.ttf',72)
 
     gameState = 'startState'
 
@@ -66,7 +82,7 @@ function love.keypressed(key)
         love.event.quit()
     elseif key == 'enter' or key == 'return' then 
         if gameState == 'startState' then
-            gameState = 'playState'
+            gameState = 'countDownState'
         elseif gameState == 'loseState' then
             gameState = 'startState'
         end
@@ -110,10 +126,12 @@ function love.update(dt)
             pipe:update(dt)
 
             if checkCollide(pipe) then
+                sounds['hurt']:play()
                 gameState = 'loseState'
             end
 
             if (bird.x) > (pipe.x + pipe.width) and pipe.countable then 
+                sounds['score']:play()
                 score = score + 1
                 setPipeScroll(-2)
                 GROUND_SPEED = GROUND_SPEED - 2
@@ -135,6 +153,17 @@ function love.update(dt)
         love.keyboard.keysPressed = {}
     elseif gameState == 'startState' then
         resetGame()
+    elseif gameState == 'countDownState' then
+        countTime = countTime + dt
+        if countTime > countDownTime then
+            countTime = countTime % countDownTime
+            sounds['ping']:play()
+            Timer = Timer - 1
+        end
+        if Timer == 0 then
+            gameState = 'playState'
+            Timer = 3
+        end
     end
 
 end
@@ -152,12 +181,16 @@ function love.draw()
         pipe:render()
     end
     
-    love.graphics.print('Game State: '..PIPE_SCROLL, VIRTUAL_WINDOW_WIDTH / 2, 2)
+    if gameState == 'countDownState' then
+        love.graphics.print('Game State: '..gameState, VIRTUAL_WINDOW_WIDTH / 2, 2)
+    end
 
     bird:render()
 
     if gameState == 'playState' then
         displayScore()
+    elseif gameState == 'countDownState' then
+        displayCountDowmState()
     elseif gameState == 'startState' then
         displayStartScreen()
     else
@@ -222,4 +255,12 @@ function resetGame()
     distance = 120
     firstPipe = Pipe()
     pipes = {firstPipe}
+end
+
+function displayCountDowmState()
+    love.graphics.setColor(255/255, 255/255, 255/255)
+    love.graphics.setFont(fontMedium)
+    love.graphics.printf('Right click or use space to jump', 0, VIRTUAL_WINDOW_HEIGHT / 2 - 50, 512, 'center')
+    love.graphics.setFont(fontHuge)
+    love.graphics.printf(tostring(Timer), 0, VIRTUAL_WINDOW_HEIGHT / 2, 512, 'center')
 end
